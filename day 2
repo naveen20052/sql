@@ -1,0 +1,410 @@
+insert into Sales values(5,"bob","south","monitor",1,150.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(6,"alice","north","mouse",2,50.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(7,"charlie","east","latop",2,2000.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(8,"david","west","laptop",1,1100.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(9,"david","west","mouse",4,100.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(10,"eve","south","monitor",3,450.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(11,"eve","south","keyboard",2,100.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(12,"eve","south","mouse",1,25.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(13,"alice","north","keyboard",1,60.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(14,"bob","south","laptop",1,1200.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into Sales values(15,"charlie","east","mouse",2,50.00);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from sales;
++--------+-------------+--------+----------+----------+------------+
+| SaleID | Salesperson | Region | Product  | Quantity | SaleAmount |
++--------+-------------+--------+----------+----------+------------+
+|      1 | alice       | north  | laptop   |        1 |    1000.00 |
+|      2 | bob         | south  | mouse    |        3 |      75.00 |
+|      3 | alice       | north  | monitor  |        2 |     300.00 |
+|      4 | charlie     | east   | keyboard |        1 |      50.00 |
+|      5 | bob         | south  | monitor  |        1 |     150.00 |
+|      6 | alice       | north  | mouse    |        2 |      50.00 |
+|      7 | charlie     | east   | latop    |        2 |    2000.00 |
+|      8 | david       | west   | laptop   |        1 |    1100.00 |
+|      9 | david       | west   | mouse    |        4 |     100.00 |
+|     10 | eve         | south  | monitor  |        3 |     450.00 |
+|     11 | eve         | south  | keyboard |        2 |     100.00 |
+|     12 | eve         | south  | mouse    |        1 |      25.00 |
+|     13 | alice       | north  | keyboard |        1 |      60.00 |
+|     14 | bob         | south  | laptop   |        1 |    1200.00 |
+|     15 | charlie     | east   | mouse    |        2 |      50.00 |
++--------+-------------+--------+----------+----------+------------+
+15 rows in set (0.00 sec)
+
+mysql> select Saleseperson,sum(Product) as TOT_PRODUCT from Sales group by Salesperson;
+ERROR 1054 (42S22): Unknown column 'Saleseperson' in 'field list'
+mysql> Salesperson,sum(Product) as TOT_PRODUCT from Sales group by Salesperson;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Salesperson,sum(Product) as TOT_PRODUCT from Sales group by Salesperson' at line 1
+mysql>  select Saleseperson,sum(Quantity) as TOT_PRODUCT from Sales group by Salesperson;
+ERROR 1054 (42S22): Unknown column 'Saleseperson' in 'field list'
+mysql> select Salesperson,sum(Quantity) as TOT_PRODUCT from Sales group by Salesperson;
++-------------+-------------+
+| Salesperson | TOT_PRODUCT |
++-------------+-------------+
+| alice       |           6 |
+| bob         |           5 |
+| charlie     |           5 |
+| david       |           5 |
+| eve         |           6 |
++-------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> select Salesperson,sum(Quantity) as tot_out from Sales group by Salesperson having sum(quantity) > 5;
++-------------+---------+
+| Salesperson | tot_out |
++-------------+---------+
+| alice       |       6 |
+| eve         |       6 |
++-------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select Salesperson,count(*) as tot_out from Sales group by Salesperson;
++-------------+---------+
+| Salesperson | tot_out |
++-------------+---------+
+| alice       |       4 |
+| bob         |       3 |
+| charlie     |       3 |
+| david       |       2 |
+| eve         |       3 |
++-------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select Salesperson,sum(SaleAmount) as tot_out from Sales group by Salesperson having sum(saleAmount) > 1000;
++-------------+---------+
+| Salesperson | tot_out |
++-------------+---------+
+| alice       | 1410.00 |
+| bob         | 1425.00 |
+| charlie     | 2100.00 |
+| david       | 1200.00 |
++-------------+---------+
+4 rows in set (0.00 sec)
+
+mysql> select Salesperson,count(*) as tranSACTION from Sales group by Salesperson having count(*) > 2;
++-------------+-------------+
+| Salesperson | tranSACTION |
++-------------+-------------+
+| alice       |           4 |
+| bob         |           3 |
+| charlie     |           3 |
+| eve         |           3 |
++-------------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> selcet Product ,sum(SaleAmount) as tot_sum from Sales group by Product having sum(SaleAmount)>500;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selcet Product ,sum(SaleAmount) as tot_sum from Sales group by Product having su' at line 1
+mysql> selcet Product ,sum(SaleAmount) as tot_sum from Sales group by Product having sum(SaleAmount) > 500;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selcet Product ,sum(SaleAmount) as tot_sum from Sales group by Product having su' at line 1
+mysql> SELECT Product,
+    ->        SUM(SaleAmount) AS tot_sum
+    -> FROM Sales
+    -> GROUP BY Product
+    -> HAVING SUM(SaleAmount) > 500;
++---------+---------+
+| Product | tot_sum |
++---------+---------+
+| laptop  | 3300.00 |
+| monitor |  900.00 |
+| latop   | 2000.00 |
++---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select region , product ,sum(quantity) as tot_out from Sales group by region,product;
++--------+----------+---------+
+| region | product  | tot_out |
++--------+----------+---------+
+| north  | laptop   |       1 |
+| south  | mouse    |       4 |
+| north  | monitor  |       2 |
+| east   | keyboard |       1 |
+| south  | monitor  |       4 |
+| north  | mouse    |       2 |
+| east   | latop    |       2 |
+| west   | laptop   |       1 |
+| west   | mouse    |       4 |
+| south  | keyboard |       2 |
+| north  | keyboard |       1 |
+| south  | laptop   |       1 |
+| east   | mouse    |       2 |
++--------+----------+---------+
+13 rows in set (0.00 sec)
+
+mysql> select salesperson,product,sum(quantity) as sold_one from sales group by product,salesperson having sum(quantity)> 1;
++-------------+----------+----------+
+| salesperson | product  | sold_one |
++-------------+----------+----------+
+| bob         | mouse    |        3 |
+| alice       | monitor  |        2 |
+| alice       | mouse    |        2 |
+| charlie     | latop    |        2 |
+| david       | mouse    |        4 |
+| eve         | monitor  |        3 |
+| eve         | keyboard |        2 |
+| charlie     | mouse    |        2 |
++-------------+----------+----------+
+8 rows in set (0.00 sec)
+
+mysql> select region,product,avg(quantity) as tot_out from Sales group by region,product having avg(quantity) > 1;
++--------+----------+---------+
+| region | product  | tot_out |
++--------+----------+---------+
+| south  | mouse    |  2.0000 |
+| north  | monitor  |  2.0000 |
+| south  | monitor  |  2.0000 |
+| north  | mouse    |  2.0000 |
+| east   | latop    |  2.0000 |
+| west   | mouse    |  4.0000 |
+| south  | keyboard |  2.0000 |
+| east   | mouse    |  2.0000 |
++--------+----------+---------+
+8 rows in set (0.01 sec)
+
+mysql> select sum(salesamoumt),salesperson from sales group by sum(salesamount),salesperson where sum(salesperson) between 200 and 500;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where sum(salesperson) between 200 and 500' at line 1
+mysql> select sum(salesamoumt),salesperson from sales group by sum(salesamount),salesperson having sum(salesperson) between 200 and 500;
+ERROR 1054 (42S22): Unknown column 'salesamoumt' in 'field list'
+mysql> select sum(salesamoumt),salesperson as tot_sum from sales group by sum(salesamount),salesperson having sum(salesperson) between 200 and 500;
+ERROR 1054 (42S22): Unknown column 'salesamoumt' in 'field list'
+mysql> select sum(salesamoumt),salesperson as tot_sum from sales group by salesperson having sum(salesperson) between 200 and 500;
+ERROR 1054 (42S22): Unknown column 'salesamoumt' in 'field list'
+mysql>  select salesperson,sum(salesamoumt) as tot_sum from sales group by salesperson having sum(salesperson) between 200 and 500;
+ERROR 1054 (42S22): Unknown column 'salesamoumt' in 'field list'
+mysql> select salesperson,sum(saleamoumt) as tot_sum from sales group by salesperson having sum(saleamount) between 200 and 500;
+ERROR 1054 (42S22): Unknown column 'saleamoumt' in 'field list'
+mysql> select salesperson,sum(saleamount) as tot_sum from sales group by salesperson having sum(saleamount) between 200 and 500;
+Empty set (0.00 sec)
+
+mysql> select product ,sum (quantity) as tot_pt from sales order by products having sum(quantity) > 5;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'having sum(quantity) > 5' at line 1
+mysql> select product ,sum (quantity) as tot_pt from sales order by products having sum(quantity) > 3;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'having sum(quantity) > 3' at line 1
+mysql> SELECT product, SUM(quantity) AS total_quantity
+    -> FROM sales
+    -> GROUP BY product
+    -> HAVING SUM(quantity) > 3;
++----------+----------------+
+| product  | total_quantity |
++----------+----------------+
+| mouse    |             12 |
+| monitor  |              6 |
+| keyboard |              4 |
++----------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> select salesperson as sales_name from sales where product = laptop;
+ERROR 1054 (42S22): Unknown column 'laptop' in 'where clause'
+mysql> select salesperson,product as sales_name from sales  group by salesperson where product = laptop ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where product = laptop' at line 1
+mysql> select salesperson,product as sales_name from sales  where product ="laptop" group by salesperson ;
++-------------+------------+
+| salesperson | sales_name |
++-------------+------------+
+| alice       | laptop     |
+| david       | laptop     |
+| bob         | laptop     |
++-------------+------------+
+3 rows in set (0.01 sec)
+
+mysql> select salesperson,region,sum(saleamount) as sale_ap from sales group by salesperson,region having sum(saleamount)>500;
++-------------+--------+---------+
+| salesperson | region | sale_ap |
++-------------+--------+---------+
+| alice       | north  | 1410.00 |
+| bob         | south  | 1425.00 |
+| charlie     | east   | 2100.00 |
+| david       | west   | 1200.00 |
+| eve         | south  |  575.00 |
++-------------+--------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select salesperson,regiom,sum(quantity) as sale_ap from sales group by salesperson,region having sum(quantity)>=2;
+ERROR 1054 (42S22): Unknown column 'regiom' in 'field list'
+mysql> mysql> select salesperson,region,sum(quantity) as sale_ap from sales group by salesperson,region having sum(quantity)>=2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql> select salesperson,region,sum(quantity) as sale_ap from sales group by sa' at line 1
+mysql> SELECT
+    ->     salesperson,
+    ->     region,
+    ->     SUM(quantity) AS sale_ap
+    -> FROM
+    ->     sales
+    -> GROUP BY
+    ->     salesperson, region
+    -> HAVING
+    ->     SUM(quantity) >= 2;
++-------------+--------+---------+
+| salesperson | region | sale_ap |
++-------------+--------+---------+
+| alice       | north  |       6 |
+| bob         | south  |       5 |
+| charlie     | east   |       5 |
+| david       | west   |       5 |
+| eve         | south  |       6 |
++-------------+--------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT salesperson, region
+    -> FROM sales
+    -> GROUP BY salesperson, region, product
+    -> HAVING COUNT(*) > 0
+    -> ;
++-------------+--------+
+| salesperson | region |
++-------------+--------+
+| alice       | north  |
+| bob         | south  |
+| alice       | north  |
+| charlie     | east   |
+| bob         | south  |
+| alice       | north  |
+| charlie     | east   |
+| david       | west   |
+| david       | west   |
+| eve         | south  |
+| eve         | south  |
+| eve         | south  |
+| alice       | north  |
+| bob         | south  |
+| charlie     | east   |
++-------------+--------+
+15 rows in set (0.00 sec)
+
+mysql> SELECT salesperson, region
+    -> FROM sales
+    -> GROUP BY salesperson, region, product
+    -> HAVING COUNT(*) > 0
+    -> ;
++-------------+--------+
+| salesperson | region |
++-------------+--------+
+| alice       | north  |
+| bob         | south  |
+| alice       | north  |
+| charlie     | east   |
+| bob         | south  |
+| alice       | north  |
+| charlie     | east   |
+| david       | west   |
+| david       | west   |
+| eve         | south  |
+| eve         | south  |
+| eve         | south  |
+| alice       | north  |
+| bob         | south  |
+| charlie     | east   |
++-------------+--------+
+15 rows in set (0.00 sec)
+
+mysql> SELECT salesperson, region FROM sales GROUP BY salesperson, region, product HAVING COUNT(*) >=2 ;
+Empty set (0.00 sec)
+
+mysql> SELECT salesperson, region, COUNT(product)
+    -> FROM sales
+    -> GROUP BY salesperson, region
+    -> HAVING COUNT(product) >= 2;
++-------------+--------+----------------+
+| salesperson | region | COUNT(product) |
++-------------+--------+----------------+
+| alice       | north  |              4 |
+| bob         | south  |              3 |
+| charlie     | east   |              3 |
+| david       | west   |              2 |
+| eve         | south  |              3 |
++-------------+--------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> select product,count(*) as cuony_q from sales group by product having count(*) >=2;
++----------+---------+
+| product  | cuony_q |
++----------+---------+
+| laptop   |       3 |
+| mouse    |       5 |
+| monitor  |       3 |
+| keyboard |       3 |
++----------+---------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT region, salesperson, SUM(quantity) AS total_quantity
+    -> FROM sales
+    -> GROUP BY region, salesperson;
++--------+-------------+----------------+
+| region | salesperson | total_quantity |
++--------+-------------+----------------+
+| north  | alice       |              6 |
+| south  | bob         |              5 |
+| east   | charlie     |              5 |
+| west   | david       |              5 |
+| south  | eve         |              6 |
++--------+-------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     salesperson,
+    ->     COUNT(*) AS transaction_count,
+    ->     SUM(quantity * price) AS total_sales
+    -> FROM
+    ->     sales
+    -> GROUP BY
+    ->     salesperson
+    -> HAVING
+    ->     COUNT(*) > 3 AND
+    ->     SUM(quantity * price) > 1000;
+ERROR 1054 (42S22): Unknown column 'price' in 'field list'
+mysql> select salesperson,count(*) as tra_as ,sum(quantity*saleamount)from sales group by salesperson having count(*) > 3 and sum(quantity * saleamount) > 1000;
++-------------+--------+--------------------------+
+| salesperson | tra_as | sum(quantity*saleamount) |
++-------------+--------+--------------------------+
+| alice       |      4 |                  1760.00 |
++-------------+--------+--------------------------+
+1 row in set (0.00 sec)
+
+mysql> select region,avg(saleamount) as tot_1 from sales group by region having avg(saleamount)>200;
++--------+------------+
+| region | tot_1      |
++--------+------------+
+| north  | 352.500000 |
+| south  | 333.333333 |
+| east   | 700.000000 |
+| west   | 600.000000 |
++--------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select product ,region ,sum(quantity) as qty_reg from sales group by product,region having sum (quantity) > 3;
+ERROR 1630 (42000): FUNCTION buissness.sum does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+mysql> ^C
+mysql>  select product ,region ,sum(quantity) as qty_reg from sales group by product,region having sum (quantity) > 3;
+ERROR 1630 (42000): FUNCTION buissness.sum does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+mysql> SELECT region, product, SUM(quantity) AS total_units
+    -> FROM sales
+    -> GROUP BY region, product
+    -> HAVING SUM(quantity) > 3;
++--------+---------+-------------+
+| region | product | total_units |
++--------+---------+-------------+
+| south  | mouse   |           4 |
+| south  | monitor |           4 |
+| west   | mouse   |           4 |
++--------+---------+-------------+
+3 rows in set (0.00 sec)
